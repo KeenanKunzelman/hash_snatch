@@ -51,12 +51,20 @@ def locate_winfs(drives):
 
 def mount_drive(drive):
     #should refactor to accept input for /media/drivetype
-    subprocess.Popen(["sudo mount -t ntfs -o nls=utf8,umask=0222 {} /media/windows".format(drive.get_source()), "/etc/services"], shell=True)
-    subprocess.call(["sudo", "cp", "/media/windows/Windows/System32/calc.exe", "~/Desktop"])
+    subprocess.Popen(["sudo mount -t ntfs -o nls=utf8,uid=1000,gid=1000,dmask=027,fmask=137 {} /media/windows".format(drive.get_source()), "/etc/services"], shell=True)
+ 
+ #no fucking clue what is good here
+ 
+    # os.chdir("/media/windows")
+    # subprocess.Popen("ls")
+
+    # subprocess.call(["cd", "/media/windows"])
+    # subprocess.call(["ls"])
 
 def find_winpayload():
 #    source = os.listdir("/media/windows")
 #    print(source)
+    # subprocess.call(["sudo", "cp", "/media/windows/Windows/System32/calc.exe", "~/Desktop"])
     pass
     # shutil.copy('/media/windows/Windows/System32/calc.exe', "~/Desktop")
 
