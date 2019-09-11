@@ -46,7 +46,8 @@ def locate_winfs(drives):
 
 def mount_drive(drive):
     #mount -t ntfs-3g or some shit like that here lol
-    subprocess.Popen(["sudo mount -t ntfs -o nls=utf8,umask=0222 {} /media/windows".format(drive.get_source(), "/etc/services")], shell=True)
+   
+    subprocess.Popen(["sudo mount -t ntfs -o nls=utf8,umask=0222 {} /media/windows".format(drive.get_source()), "/etc/services"], shell=True)
 
     # subprocess.Popen(["sudo mount -t ntfs-3g {} /mnt".format(drive.get_source(), "/etc/services")], shell=True)
 
@@ -102,7 +103,8 @@ def main():
         print(drive.get_source())
         print(drive.get_fs())
     
-    mount_drive(win_drives[0])
+    print(win_drives[1].get_source())
+    mount_drive(win_drives[1])
     
 
 
