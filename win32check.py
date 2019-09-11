@@ -3,6 +3,8 @@ import subprocess
 import ctypes
 import ctypes.util
 import os
+
+
 libc = ctypes.CDLL(ctypes.util.find_library('c'), use_errno=True)
 libc.mount.argtypes = (ctypes.c_char_p, ctypes.c_char_p, ctypes.c_char_p, ctypes.c_ulong, ctypes.c_char_p)
 
@@ -28,13 +30,25 @@ def locate_winfs(drives):
 
 
 # use and unpack drive object here
-def mount_drive(source, target, fs, options=''):
-  ret = libc.mount(source, target, fs, 0, options)
-  if ret < 0:
-    errno = ctypes.get_errno()
-    raise OSError(errno, "Error mounting {} ({}) on {} with options '{}': {}".
-    format(source, fs, target, options, os.strerror(errno)))
+# def mount_drive(source, target, fs, options=''):
+#   ret = libc.mount(source, target, fs, 0, options)
+#   if ret < 0:
+#     errno = ctypes.get_errno()
+#     raise OSError(errno, "Error mounting {} ({}) on {} with options '{}': {}".
+#     format(source, fs, target, options, os.strerror(errno)))
 
+# def mount_drive(drive):
+    
+#     ret = libc.mount(drive.get_source(), drive.get_target(), drive.get_fs(), 0, drive.get_options())
+#     if ret < 0:
+#         errno = ctypes.get_errno()
+#         raise OSError(errno, "Error mounting {} ({}) on {} with options '{}': {}".format(drive.get_source(), drive.get_fs(), drive.get_target(), drive.get_options(), os.strerror(errno)))
+
+def mount_drive(drive):
+    #mount -t ntfs-3g or some shit like that here lol
+    subprocess.Popen(["sudo mount -t ntfs -o nls=utf8,umask=0222 {} /media/windows".format(drive.get_source(), "/etc/services")], shell=True)
+
+    # subprocess.Popen(["sudo mount -t ntfs-3g {} /mnt".format(drive.get_source(), "/etc/services")], shell=True)
 
 def find_payload():
     pass
@@ -79,13 +93,17 @@ def storewin_drives(raw_win_drives):
 
 
 def main():
+    
+
     drives = grab_drives()
     raw_win_drives = locate_winfs(drives)
     win_drives = storewin_drives(raw_win_drives)
     for drive in win_drives:
         print(drive.get_source())
         print(drive.get_fs())
-  
+    
+    mount_drive(win_drives[0])
+    
 
 
 
