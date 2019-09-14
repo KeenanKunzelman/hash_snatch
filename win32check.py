@@ -77,13 +77,13 @@ def storewin_drives(raw_win_drives):
     return win_drives
 
 def main():
-    parser = argparse.ArgumentParser(description='Choose which mode to run program in')
+    parser = argparse.ArgumentParser(description='Choose which mode to run program in. No input lists all the storage devices.')
     group = parser.add_mutually_exclusive_group()
-    group.add_argument('-i', '--exfil', action="store_true")
+    group.add_argument('-w', '--exfil_win', action="store_true")
     args = parser.parse_args()
     
     drives = grab_drives()
-    if args.exfil:
+    if args.exfil_win:
         drive_count = 0
         raw_win_drives = locate_winfs(drives)
         win_drives = storewin_drives(raw_win_drives)
