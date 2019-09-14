@@ -4,9 +4,11 @@
 # Description: Meant to be run on a linux bootable usb. Program scans for all connected storage devices and looks for specific 
 # file systems to mount and then exfils data. Only looks for NTFS and exfils the calc.exe program for now.
 
+import sys
 import subprocess
 import os
-import shutil
+import argparse
+import time
 
 # ****overengineered class that probably should go. I could just use tuple here to store source,fs values because source always has to be unique****
 class Drive:
@@ -51,26 +53,12 @@ def locate_winfs(drives):
 
 def mount_drive(drive):
     #should refactor to accept input for /media/drivetype
-    subprocess.Popen(["sudo mount -t ntfs -o nls=utf8,uid=1000,gid=1000,dmask=027,fmask=137 {} /media/windows".format(drive.get_source()), "/etc/services"], shell=True)
- 
- #no fucking clue what is good here
- 
-    # os.chdir("/media/windows")
-    # subprocess.Popen("ls")
-
-    # subprocess.call(["cd", "/media/windows"])
-    # subprocess.call(["ls"])
+    subprocess.Popen(["sudo mount -t ntfs-3g -o nls=utf8,uid=1000,gid=1000,dmask=027,fmask=137 {} /media/windows".format(drive.get_source()), "/etc/services"], shell=True)
+    time.sleep(1)
 
 def find_winpayload():
-#    source = os.listdir("/media/windows")
-#    print(source)
-    # subprocess.call(["sudo", "cp", "/media/windows/Windows/System32/calc.exe", "~/Desktop"])
-    pass
-    # shutil.copy('/media/windows/Windows/System32/calc.exe', "~/Desktop")
+    subprocess.call('cp /media/windows/Windows/System32/calc.exe /home/zigmo/Desktop/', shell=True)
 
-
-  
-    # subprocess.Popen(["cp calc.exe ~/Desktop", "/etc/services"], shell=True)
 
 def storewin_drives(raw_win_drives):
     win_drives = []
@@ -89,11 +77,29 @@ def storewin_drives(raw_win_drives):
     return win_drives
 
 def main():
+    parser = argparse.ArgumentParser(description='Choose which mode to run program in')
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('-i', '--exfil', action="store_true")
+    args = parser.parse_args()
+    
     drives = grab_drives()
-    raw_win_drives = locate_winfs(drives)
-    win_drives = storewin_drives(raw_win_drives)
-    mount_drive(win_drives[1])
-    find_winpayload()
+    if args.exfil:
+        drive_count = 0
+        raw_win_drives = locate_winfs(drives)
+        win_drives = storewin_drives(raw_win_drives)
+        print("Conected drives using the NTFS file system.\n")
+        for drive in raw_win_drives:
+            print("Drive {}\n{}\n".format(drive_count, drive))
+            drive_count += 1
+        target = input("\n========================================================\nplease choose a drive to exploit. Note drives start at 0\nDrive ")
+        print("Targeting: " + raw_win_drives[int(target)])
+        mount_drive(win_drives[int(target)])
+        find_winpayload()
+    elif not len(sys.argv) > 1:
+        for drive in drives:
+            print(drive)
+    else:
+        print("invalid flag")
 
 
  
