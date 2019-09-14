@@ -58,7 +58,7 @@ def mount_drive(drive):
 
 def find_winpayload():
     subprocess.call('cp /media/windows/Windows/System32/calc.exe /home/zigmo/Desktop/', shell=True)
-
+    print('Payload has been succesfully exfiltrated to ~/Desktop')
 
 def storewin_drives(raw_win_drives):
     win_drives = []
@@ -76,6 +76,10 @@ def storewin_drives(raw_win_drives):
         win_drives.append(temp_drive)
     return win_drives
 
+
+
+
+
 def main():
     parser = argparse.ArgumentParser(description='Choose which mode to run program in. No input lists all the storage devices.')
     group = parser.add_mutually_exclusive_group()
@@ -83,6 +87,8 @@ def main():
     args = parser.parse_args()
     
     drives = grab_drives()
+
+
     if args.exfil_win:
         drive_count = 0
         raw_win_drives = locate_winfs(drives)
