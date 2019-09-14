@@ -1,4 +1,4 @@
-#### Calc Stealer
+### Calc Stealer
 
 ## Description
 
