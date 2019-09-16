@@ -4,10 +4,7 @@
 # Description: Meant to be run on a linux bootable usb. Program scans for all connected storage devices and looks for specific 
 # file systems to mount and then exfils data. Only looks for NTFS and exfils the calc.exe program for now.
 
-import sys
-import subprocess
-import argparse
-import time
+import sys, subprocess, argparse, time
 
 # ****overengineered class that probably should go. I could just use tuple here to store source,fs values because source always has to be unique****
 class Drive:
@@ -103,7 +100,7 @@ def main():
         for drive in raw_win_drives:
             print("Drive {}\n{}\n".format(drive_count, drive))
             drive_count += 1
-        target = input("\n========================================================\nplease choose a drive to exploit. Note drives start at 0\nDrive ")
+        target = input("\n========================================================\n2 please choose a drive to exploit. Note drives start at 0\nDrive ")
         print("Targeting: " + raw_win_drives[int(target)])
         mount_drive(win_drives[int(target)])
         find_winpayload()
@@ -121,3 +118,18 @@ if __name__ == '__main__':
     
 
 
+#pretty print script run with no drives
+
+# implement sam syste security and software
+
+# Got to implement non hardcoded vals
+
+# unmount the drive
+
+# new arg that cp files onto the windows box
+
+# find calc.exe rename it to calcbak.exe upload own version of calc
+
+# bonus win10 registry of offline systems. 
+
+# shit get cached in hybernation file?
