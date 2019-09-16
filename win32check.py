@@ -88,6 +88,9 @@ def pretty_print(drives):
     apl_drives = linux_drives =  allpurpose_drives = win_drives = []
   
     print("********************************************************************************************",end ="")
+    print("\n*****************************A TABLE OF ALL CONNECTED DEVICES*******************************",end ="")
+    print("\n********************************************************************************************",end ="")
+
     print("\n*    NTFS              APFS                ext4                FAT             squashfs    *",end ="")
     for drive in drives:
         if "ntfs" in drive.get_fs():
@@ -97,7 +100,8 @@ def pretty_print(drives):
         elif "ext4" in drive.get_fs():
             print("\n*     X                 X               {}               X                 X        *".format(drive.get_source()), end="")
         # elif "fat" or "fat32" in drive.get_fs():
-        #     allpurpose_drives.append(drive)
+        #     print("\n*  X            X                   X                   {}                 X        *".format(drive.get_source()), end="")
+        # #     allpurpose_drives.append(drive)
         elif "squashfs" in drive.get_fs():
             if len(drive.get_source()) == 10:
                 print("\n*     X                 X                   X                   X             {}   *".format(drive.get_source()), end="")
@@ -145,13 +149,15 @@ if __name__ == '__main__':
     
 
 
-#pretty print script run with no drives
+#pretty print script CHECK
+# 
+# What happens when yourun with no drives 
 
-# implement sam syste security and software
+# copy sam syste security and software
 
-# Got to implement non hardcoded vals
+# Modularize code to implement non hardcoded vals
 
-# unmount the drive
+# unmount the drive at end of execution
 
 # new arg that cp files onto the windows box
 
