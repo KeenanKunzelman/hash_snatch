@@ -128,14 +128,17 @@ def main():
         drive_count = 0
         raw_win_drives = locate_winfs(drives)
         win_drives = store_drives(raw_win_drives)
-        print("Conected drives using the NTFS file system.\n")
-        for drive in raw_win_drives:
-            print("Drive {}\n{}\n".format(drive_count, drive))
-            drive_count += 1
-        target = input("\n========================================================\n2 please choose a drive to exploit. Note drives start at 0\nDrive ")
-        print("Targeting: " + raw_win_drives[int(target)])
-        mount_drive(win_drives[int(target)])
-        find_winpayload()
+        if len(raw_win_drives) < 1:
+            print("no exploitable drives")
+        else:
+            print("Conected drives using the NTFS file system.\n")
+            for drive in raw_win_drives:
+                print("Drive {}\n{}\n".format(drive_count, drive))
+                drive_count += 1
+            target = input("\n========================================================\n please choose a drive to exploit. Note drives start at 0\nDrive ")
+            print("Targeting: " + raw_win_drives[int(target)])
+            mount_drive(win_drives[int(target)])
+            find_winpayload()
     elif not len(sys.argv) > 1:
         pretty_print(all_drives)
         
