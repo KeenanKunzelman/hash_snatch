@@ -92,16 +92,17 @@ def pretty_print(drives):
     print("\n********************************************************************************************",end ="")
 
     print("\n*    NTFS              APFS                ext4                FAT             squashfs    *",end ="")
+    #APFS AND FAT fs are a bit buggy need to fix.
     for drive in drives:
         if "ntfs" in drive.get_fs():
             print("\n*  {}            X                   X                   X                 X        *".format(drive.get_source()), end="")
         elif "apfs" in drive.get_fs():
-            apl_drives.append(drive)
+            print("\n*     X                 {}               X               X                 X        *".format(drive.get_source()), end="")
         elif "ext4" in drive.get_fs():
             print("\n*     X                 X               {}               X                 X        *".format(drive.get_source()), end="")
-        # elif "fat" or "fat32" in drive.get_fs():
-        #     print("\n*  X            X                   X                   {}                 X        *".format(drive.get_source()), end="")
-        # #     allpurpose_drives.append(drive)
+        elif "fat" in drive.get_fs():
+            print("\n*     X                 X                   X               {}             X        *".format(drive.get_source()), end="")
+            allpurpose_drives.append(drive)
         elif "squashfs" in drive.get_fs():
             if len(drive.get_source()) == 10:
                 print("\n*     X                 X                   X                   X             {}   *".format(drive.get_source()), end="")
