@@ -33,7 +33,7 @@ class Drive:
 #Run the command sudo blkid and then recieve its output as a bytes
 #Decode using utf-8 and then split on \n
 def grab_drives():
-    proc = subprocess.Popen(["sudo blkid", "/etc/services"], stdout=subprocess.PIPE, shell=True)
+    proc = subprocess.Popen("sudo blkid", stdout=subprocess.PIPE, shell=True)
     (drives, err) = proc.communicate()
     drives = drives.decode("utf-8").split("\n")
     return drives
@@ -46,7 +46,7 @@ def locate_winfs(drives):
         if "ntfs" in drive:
             win_drives.append(drive)
     return win_drives
-
+ 
 def mount_drive(drive):
     #should refactor to accept input for /media/drivetype to exploit different file systems
     
@@ -61,11 +61,11 @@ def find_winpayload():
     # i should implement some code that suggests a drive to choose based off of mounting other ones and lsing
     # them. This will be slow but very cool
 
-def storewin_drives(raw_win_drives):
-    win_drives = []
-    for i in range(len(raw_win_drives)):
+def store_drives(raw_drives):
+    obj_drives = []
+    for i in range(len(raw_drives)):
         temp_drive = Drive()
-        temp_raw_drive = raw_win_drives[i].split()
+        temp_raw_drive = raw_drives[i].split()
         for attribute in temp_raw_drive:
             if "/dev" in attribute:         
                 attribute = list(attribute)
@@ -74,8 +74,8 @@ def storewin_drives(raw_win_drives):
                 temp_drive.set_source(attribute)     
             elif "TYPE" in attribute:
                 temp_drive.set_fs(attribute)
-        win_drives.append(temp_drive)
-    return win_drives
+        obj_drives.append(temp_drive)
+    return obj_drives
 
 def dump_hashes():
     #incorporate pwdump or secretsdump.py to dump the hashes to the screen or a file
@@ -84,6 +84,33 @@ def dump_hashes():
     pass
 
 
+def pretty_print(drives):
+    apl_drives = linux_drives =  allpurpose_drives = win_drives = []
+  
+    print("********************************************************************************************",end ="")
+    print("\n*    NTFS              APFS                ext4                FAT             squashfs    *",end ="")
+    for drive in drives:
+        if "ntfs" in drive.get_fs():
+            print("\n*  {}            X                   X                   X                 X        *".format(drive.get_source()), end="")
+        elif "apfs" in drive.get_fs():
+            apl_drives.append(drive)
+        elif "ext4" in drive.get_fs():
+            print("\n*     X                 X               {}               X                 X        *".format(drive.get_source()), end="")
+        # elif "fat" or "fat32" in drive.get_fs():
+        #     allpurpose_drives.append(drive)
+        elif "squashfs" in drive.get_fs():
+            if len(drive.get_source()) == 10:
+                print("\n*     X                 X                   X                   X             {}   *".format(drive.get_source()), end="")
+            elif len(drive.get_source()) == 11:
+                print("\n*     X                 X                   X                   X             {}  *".format(drive.get_source()), end="")
+
+  
+    
+    print("\n********************************************************************************************",end ="\n")
+
+
+        
+
 def main():
     parser = argparse.ArgumentParser(description='Choose which mode to run program in. No input lists all the storage devices.')
     group = parser.add_mutually_exclusive_group()
@@ -91,11 +118,11 @@ def main():
     args = parser.parse_args()
     
     drives = grab_drives()
-
+    all_drives = store_drives(drives)
     if args.exfil_win:
         drive_count = 0
         raw_win_drives = locate_winfs(drives)
-        win_drives = storewin_drives(raw_win_drives)
+        win_drives = store_drives(raw_win_drives)
         print("Conected drives using the NTFS file system.\n")
         for drive in raw_win_drives:
             print("Drive {}\n{}\n".format(drive_count, drive))
@@ -105,8 +132,8 @@ def main():
         mount_drive(win_drives[int(target)])
         find_winpayload()
     elif not len(sys.argv) > 1:
-        for drive in drives:
-            print(drive)
+        pretty_print(all_drives)
+        
     else:
         print("invalid flag")
 
