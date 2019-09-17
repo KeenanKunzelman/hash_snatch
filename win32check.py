@@ -10,9 +10,9 @@ import sys, subprocess, argparse, time
 class Drive:
     def __init__(self):
         self.source = ""
-        self.target = "/mnt"
+        # self.target = "/mnt"
         self.fs = ""
-        self.options = "rw"
+        # self.options = "rw"
 
     def set_source(self, source):
         self.source = source
@@ -21,12 +21,12 @@ class Drive:
 
     def get_source(self):
         return self.source
-    def get_target(self):
-        return self.target
+    # def get_target(self):
+    #     return self.target
     def get_fs(self):
         return self.fs
-    def get_options(self):
-        return self.options
+    # def get_options(self):
+    #     return self.options
 
 
 
@@ -49,8 +49,8 @@ def locate_winfs(drives):
  
 def mount_drive(drive):
     #should refactor to accept input for /media/drivetype to exploit different file systems
-    
-    subprocess.Popen(["sudo mount -t ntfs-3g -o nls=utf8 {} /media/windows".format(drive.get_source()), "/etc/services"], shell=True)
+    #got rid of /etc/services fromm mount command. Don't think I need it
+    subprocess.Popen("sudo mount -t ntfs-3g -o nls=utf8 {} /media/windows".format(drive.get_source()), shell=True)
     time.sleep(1)
 
 def find_winpayload():
@@ -165,7 +165,7 @@ if __name__ == '__main__':
 # 
 # What happens when yourun with no drives CHECK
 
-# copy sam syste security and software 
+# copy sam syste security and software NEEDS ATTENTION
 
 # Modularize code to implement non hardcoded vals maybe add user input to select mount point and if none exists
 # ask the user if they want to make a mountpoint
@@ -174,7 +174,7 @@ if __name__ == '__main__':
 
 # new arg that cp files onto the windows box
 
-# find calc.exe rename it to calcbak.exe upload own version of calc
+# find calc.exe rename it to calcbak.exe calc.bak? upload own version of calc
 
 # bonus win10 registry of offline systems. 
 
