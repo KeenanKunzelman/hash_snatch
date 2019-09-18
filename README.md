@@ -1,4 +1,4 @@
-![alt text](snatch_img.png "Logo Title Text 1")
+![alt text](assets/snatch_img.png "Logo Title Text 1")
 
 ## Description
 

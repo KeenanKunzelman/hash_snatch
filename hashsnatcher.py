@@ -6,7 +6,6 @@
 
 import sys, subprocess, argparse, time
 
-# ****overengineered class that probably should go. I could just use tuple here to store source,fs values because source always has to be unique****
 class Drive:
     def __init__(self):
         self.source = ""
@@ -111,7 +110,7 @@ def pretty_print(drives):
 
 def main():
 
-    subprocess.call('cat ascii_art', shell=True)
+    subprocess.call('cat assets/ascii_art', shell=True)
 
     parser = argparse.ArgumentParser(description='Choose which mode to run program in. No input lists all the storage devices.')
     group = parser.add_mutually_exclusive_group()
