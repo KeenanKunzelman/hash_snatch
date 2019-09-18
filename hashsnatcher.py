@@ -111,7 +111,7 @@ def pretty_print(drives):
 
 def main():
 
-    subprocess.call('cat swiper', shell=True)
+    subprocess.call('cat ascii_art', shell=True)
 
     parser = argparse.ArgumentParser(description='Choose which mode to run program in. No input lists all the storage devices.')
     group = parser.add_mutually_exclusive_group()
