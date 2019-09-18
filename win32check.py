@@ -94,37 +94,25 @@ def dump_hashes():
 def pretty_print(drives):
     apl_drives = linux_drives =  allpurpose_drives = win_drives = []
   
-    print("********************************************************************************************",end ="")
-    print("\n*****************************A TABLE OF ALL CONNECTED DEVICES*******************************",end ="")
-    print("\n********************************************************************************************",end ="")
+    print("\t\t\t    *********************************************************************************************",end ="")
+    print("\n\t\t\t    *****************************A TABLE OF ALL CONNECTED DEVICES********************************",end ="")
+    print("\n\t\t\t    *********************************************************************************************",end ="")
 
-    print("\n*    NTFS              APFS                ext4                FAT             squashfs    *",end ="")
+    print("\n\t\t\t    *\t\tDrive Location\t\t\tFile System\t\t\tMounted\t\t*",end ="")
 
     #APFS AND FAT fs are a bit buggy need to fix.
     for drive in drives:
-        if "ntfs" in drive.get_fs():
-            print("\n*  {}            X                   X                   X                 X        *".format(drive.get_source()), end="")
-        elif "apfs" in drive.get_fs():
-            print("\n*     X                 {}               X               X                 X        *".format(drive.get_source()), end="")
-        elif "ext4" in drive.get_fs():
-            print("\n*     X                 X               {}               X                 X        *".format(drive.get_source()), end="")
-        elif "fat" in drive.get_fs():
-            print("\n*     X                 X                   X               {}             X        *".format(drive.get_source()), end="")
-            allpurpose_drives.append(drive)
-        elif "squashfs" in drive.get_fs():
-            if len(drive.get_source()) == 10:
-                print("\n*     X                 X                   X                   X             {}   *".format(drive.get_source()), end="")
-            elif len(drive.get_source()) == 11:
-                print("\n*     X                 X                   X                   X             {}  *".format(drive.get_source()), end="")
-
-  
-    
-    print("\n********************************************************************************************",end ="\n")
+        if len(drive.get_fs()) > 1:
+            print("\n\t\t\t    *\t\t  {}\t\t\t{}\t\t\t   no\t\t*".format(drive.get_source(), drive.get_fs()), end="")
+    print("\n\t\t\t    *********************************************************************************************",end ="\n")
 
 
         
 
 def main():
+
+    subprocess.call('cat swiper', shell=True)
+
     parser = argparse.ArgumentParser(description='Choose which mode to run program in. No input lists all the storage devices.')
     group = parser.add_mutually_exclusive_group()
     group.add_argument('-w', '--exfil_win', action="store_true")
@@ -179,3 +167,5 @@ if __name__ == '__main__':
 # bonus win10 registry of offline systems. 
 
 # shit get cached in hybernation file?
+
+# make table dynamically pull available file systems and display them. CHECK
