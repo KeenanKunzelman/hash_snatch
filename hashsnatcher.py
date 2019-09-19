@@ -123,7 +123,7 @@ def main():
             print("\n\t\t\t\t\t\t    Conected drives using the NTFS file system.\n")
             for drive in raw_win_drives:
                 if len(drive) > 69:
-                    print("\t\t\t\t\t\t\t\t     Drive {}\n\t\t\t{}\n".format(drive_count, drive))
+                    print("\t\t\t\t\t\t\t\t     Drive {}\n\t\t\t    {}\n".format(drive_count, drive))
                 else:
                     print("\t\t\t\t\t\t\t\t     Drive {}\n\t\t\t\t\t{}\n".format(drive_count, drive))
                 
