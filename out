@@ -1,0 +1,20 @@
+
+Conected drives using the NTFS file system.
+
+[Drive 0] /dev/sdb1: LABEL="System Reserved" UUID="2EEC9D83EC9D45CD" TYPE="ntfs" PARTUUID="23923449-01"
+
+[Drive 1] /dev/sdb2: UUID="E65CA3DE5CA3A82F" TYPE="ntfs" PARTUUID="23923449-02"
+
+
+========================================================
+please choose a drive to exploit. Note drives start at 0
+
+Drive Targeting: /dev/sdb2: UUID="E65CA3DE5CA3A82F" TYPE="ntfs" PARTUUID="23923449-02"
+['$Recycle.Bin', '.jagex_cache_32', 'Documents and Settings', 'hiberfil.sys', 'MSOCache', 'pagefile.sys', 'PerfLogs', 'Program Files', 'Program Files (x86)', 'ProgramData', 'Recovery', 'Riot Games', 'swapfile.sys', 'System Volume Information', 'Users', 'Windows']
+<class 'str'>
+['BBI', 'BBI.LOG1', 'BBI.LOG2', 'BBI{fd9a35eb-49fe-11e9-aa2c-248a07783950}.TM.blf', 'BBI{fd9a35eb-49fe-11e9-aa2c-248a07783950}.TMContainer00000000000000000001.regtrans-ms', 'BBI{fd9a35eb-49fe-11e9-aa2c-248a07783950}.TMContainer00000000000000000002.regtrans-ms', 'BCD-Template', 'BCD-Template.LOG', 'components', 'COMPONENTS.LOG1', 'drivers{776cceb4-2d9b-11ea-8cab-1c1b0d1621f3}.TM.blf', 'drivers{776cceb4-2d9b-11ea-8cab-1c1b0d1621f3}.TMContainer00000000000000000001.regtrans-ms', 'drivers{776cceb4-2d9b-11ea-8cab-1c1b0d1621f3}.TMContainer00000000000000000002.regtrans-ms', 'DRIVERS{fd9a35cb-49fe-11e9-aa2c-248a07783950}.TM.blf', 'Journal', 'RegBack', 'sam', 'SAM.LOG1', 'SAM.LOG2', 'security', 'SECURITY.LOG1', 'SECURITY.LOG2', 'software', 'SOFTWARE.LOG1', 'SOFTWARE.LOG2', 'system', 'SYSTEM.LOG1', 'SYSTEM.LOG2', 'systemprofile', 'TxR', 'COMPONENTS.LOG2', 'COMPONENTS{fd9a35c3-49fe-11e9-aa2c-248a07783950}.TMContainer00000000000000000001.regtrans-ms', 'DRIVERS.LOG2', 'DRIVERS{fd9a35cb-49fe-11e9-aa2c-248a07783950}.TMContainer00000000000000000001.regtrans-ms', 'ELAM{fd9a35f3-49fe-11e9-aa2c-248a07783950}.TMContainer00000000000000000002.regtrans-ms', 'COMPONENTS{fd9a35c3-49fe-11e9-aa2c-248a07783950}.TMContainer00000000000000000002.regtrans-ms', 'default', 'DEFAULT.LOG1', 'DEFAULT.LOG2', 'drivers', 'DRIVERS.LOG1', 'DRIVERS{fd9a35cb-49fe-11e9-aa2c-248a07783950}.TMContainer00000000000000000002.regtrans-ms', 'ELAM', 'ELAM.LOG1', 'ELAM.LOG2', 'ELAM{fd9a35f3-49fe-11e9-aa2c-248a07783950}.TM.blf', 'ELAM{fd9a35f3-49fe-11e9-aa2c-248a07783950}.TMContainer00000000000000000001.regtrans-ms', 'components{0f6abca1-2d9c-11ea-8cac-1c1b0d1621f3}.TM.blf', 'components{0f6abca1-2d9c-11ea-8cac-1c1b0d1621f3}.TMContainer00000000000000000001.regtrans-ms', 'components{0f6abca1-2d9c-11ea-8cac-1c1b0d1621f3}.TMContainer00000000000000000002.regtrans-ms', 'COMPONENTS{fd9a35c3-49fe-11e9-aa2c-248a07783950}.TM.blf']
+False
+No such file or directory
+[Errno 2] No such file or directory: '/media/windows/Windows/System32/config/SAM'
+drive not exploitable
+Drive has been unmounted from /media/windows
