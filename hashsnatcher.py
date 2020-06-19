@@ -42,7 +42,7 @@ def grab_drives():
     return drives
 
 # extracts the drives with ntfs types
-# Modular for inclusion of *nix systems
+# make Modular for inclusion of *nix systems?
 def locate_winfs(drives):
     win_drives = []
     for drive in drives:
@@ -76,7 +76,7 @@ def copy_winpayload():
     # them. This will be slow but very cool
 
     stamp = str(datetime.datetime.now().timestamp())
-    directory = f'{os.getcwd()}/hives_{stamp[:4]}'
+    directory = f'{os.getcwd()}/hives_{stamp[:10]}'
     os.mkdir(directory) 
 
     try:
@@ -112,6 +112,9 @@ def copy_winpayload():
     print('Drive has been unmounted from /media/windows')
 
 def store_drives(raw_drives):
+    # takes as input raw_drives from the blkid command
+    # Returns a list of Drive objects
+
     obj_drives = []
     for i in range(len(raw_drives)):
         temp_drive = Drive()
@@ -127,10 +130,10 @@ def store_drives(raw_drives):
         obj_drives.append(temp_drive)
     return obj_drives
 
-def list_n_target_windrives(drives):
+def check_for_windrives(raw_drives):
     #looking back this code is actually so trash. Gotta refactor.
     drive_count = 0
-    raw_win_drives = locate_winfs(drives)
+    raw_win_drives = locate_winfs(raw_drives)
     win_drives = store_drives(raw_win_drives)
     #not the happiest with this code but it works
     if len(raw_win_drives) < 1:
@@ -164,13 +167,15 @@ def implant_malware():
 
     subprocess.Popen('sudo umount /media/windows', shell=True)
 
-    # shutil.copyfile('/calc.exe', '/media/windows/Windows/System32/')
 
 
 
 
 
 def pretty_print(drives):
+    # takes as input an instance of the Drive class and prints
+    # out useful data about the given drive.
+
     subprocess.call('cat assets/ascii_art', shell=True)
     print('\n\n\t\t\t    *****************************************'
             '****************************************************',
@@ -204,20 +209,23 @@ def main():
             description=('Choose which mode to run program in. No '
             'input lists all the storage devices.'))
     group = parser.add_mutually_exclusive_group()
-    group.add_argument('-w', '--hives', action='store_true')
+    group.add_argument('-xh', '--extract_hives', action='store_true')
     group.add_argument('-i', '--implant', action='store_true')
     args = parser.parse_args()
 
-    drives = grab_drives()
-    conected_drives = store_drives(drives)
-    if args.hives:
-        if list_n_target_windrives(drives):
+    # this grabs the raw text for the connected drives
+    raw_drives = grab_drives()
+    # this stores the raw drived as a Drive obj.
+    conected_drives = store_drives(raw_drives)
+    if args.extract_hives:
+        if check_for_windrives(raw_drives):
             copy_winpayload()
     elif args.implant:
-        if list_n_target_windrives(drives):
+        if check_for_windrives(raw_drives):
             implant_malware()
         
     elif not len(sys.argv) > 1:
+        #no cmd line arg was given so just print connected drives 
         pretty_print(conected_drives)
     else:
         print('invalid flag')
